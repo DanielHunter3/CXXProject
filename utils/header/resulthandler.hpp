@@ -10,7 +10,7 @@
 enum TypeOfError {
     FileReadError,
     NotFoundError,
-    RangeOutError
+    RangeOutError,
     //...
 };
 

@@ -4,6 +4,7 @@
 #include <map>
 #include <cstdlib>
 #include <memory>
+#include <string>
 
 #include "header/communist.hpp"
 #include "header/element.hpp"
@@ -11,25 +12,27 @@
 
 using namespace filemaneger;
 
-Result<StringFunction> getElementFunction(const std::vector<std::string>& arguments) noexcept {
-    std::map<Function, StringFunction> functions {
+Result<Result<StringFunction>> getElementFunction(const std::vector<std::string>& arguments) noexcept {
+    std::map<Function, Result<StringFunction>> functions {
         {Rename, [arguments]() {
-            element::rename(arguments.at(1), arguments.at(2));
+            if (arguments.size() < 2)
+                return ResultError {RangeOutError};
+            element::rename(arguments[1], arguments[2]);
             return "\0";
         }},
         {Copy, [arguments]() {
-            element::copy(arguments.at(1), arguments.at(2));
+            element::copy(arguments[1], arguments[2]);
             return "\0";
         }},
         {Pwd, [arguments]() {
-            return element::pwd(arguments.at(1));
+            return element::pwd(arguments[1]);
         }}
     };
-    if (stringToFunction(arguments[0]).is_error() || 
-        functions.find(stringToFunction(arguments[0]).ok()) == functions.end()) {
-            return ResultError {RangeOutError};
+    if (stringToFunction(arguments[0]).is_ok() && 
+        functions.find(stringToFunction(arguments[0]).ok()) != functions.end()) {
+            return functions[stringToFunction(arguments[0]).ok()];
     }
-    return functions[stringToFunction(arguments[0]).ok()];
+    return ResultError {RangeOutError, "Command not found"};
 }
 
 StringFunction getFunctionOfFile(const std::vector<std::string>& arguments) {
