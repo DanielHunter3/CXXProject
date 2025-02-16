@@ -8,11 +8,9 @@
 #endif
 
 enum TypeOfError {
-    FILE_ERROR,
-    MEMORY_ERROR,
-    NETWORK_ERROR,
-    TYPE_ERROR,
-    ZERO_ERROR,
+    FileReadError,
+    NotFoundError,
+    RangeOutError
     //...
 };
 

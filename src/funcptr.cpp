@@ -11,9 +11,8 @@
 
 using namespace filemaneger;
 
-StringFunction getElementFunction(const std::vector<std::string>& arguments) {
-    auto functions = std::make_unique<std::map<Function, StringFunction>>();
-    *functions = {
+Result<StringFunction> getElementFunction(const std::vector<std::string>& arguments) noexcept {
+    std::map<Function, StringFunction> functions {
         {Rename, [arguments]() {
             element::rename(arguments.at(1), arguments.at(2));
             return "\0";
@@ -26,7 +25,11 @@ StringFunction getElementFunction(const std::vector<std::string>& arguments) {
             return element::pwd(arguments.at(1));
         }}
     };
-    return functions->at(stringToFunction(arguments.at(0)));
+    if (stringToFunction(arguments[0]).is_error() || 
+        functions.find(stringToFunction(arguments[0]).ok()) == functions.end()) {
+            return ResultError {RangeOutError};
+    }
+    return functions[stringToFunction(arguments[0]).ok()];
 }
 
 StringFunction getFunctionOfFile(const std::vector<std::string>& arguments) {

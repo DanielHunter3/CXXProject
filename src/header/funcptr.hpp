@@ -17,7 +17,7 @@ enum EnumVariantFunction {
     VecStrFunc
 };
 
-StringFunction getElementFunction(const std::vector<std::string>& arguments);
+Result<StringFunction> getElementFunction(const std::vector<std::string>&) noexcept;
 
 StringFunction getFunctionOfFile(const std::vector<std::string>& arguments);
 

@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "resulthandler.hpp"
+
 enum Function {
     Cat, Pwd, Rename,
     Copy, Cut, Echo, 
@@ -13,4 +15,4 @@ enum Function {
 
 bool isValidFunction(const Function& aCommand) noexcept;
 
-Function stringToFunction(const std::string&);
+Result<Function> stringToFunction(const std::string&) noexcept;

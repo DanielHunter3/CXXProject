@@ -7,7 +7,7 @@
 
 #include "header/filemaneger.hpp"
 
-std::vector<std::string> getFilesInDirectory(const std::string& directoryPath) {
+std::vector<std::string> getFilesInDirectory(const std::string& directoryPath) noexcept {
     std::vector<std::string> files;
     for (const auto& entry : std::filesystem::directory_iterator(directoryPath)) {
         if (entry.is_regular_file()) {
@@ -17,7 +17,7 @@ std::vector<std::string> getFilesInDirectory(const std::string& directoryPath) {
     return files;
 }
 
-std::vector<std::string> getDirectoriesInDirectory(const std::string& directoryPath) {
+std::vector<std::string> getDirectoriesInDirectory(const std::string& directoryPath) noexcept {
     std::vector<std::string> directories;
     for (const auto& entry : std::filesystem::directory_iterator(directoryPath)) {
         if (entry.is_directory()) {
@@ -27,7 +27,7 @@ std::vector<std::string> getDirectoriesInDirectory(const std::string& directoryP
     return directories;
 }
 
-std::vector<std::string> getFilesAndDirectories(const std::string& directoryPath) {
+std::vector<std::string> getFilesAndDirectories(const std::string& directoryPath) noexcept {
     std::vector<std::string> files = getFilesInDirectory(directoryPath);
     std::vector<std::string> directories = getDirectoriesInDirectory(directoryPath);
     std::vector<std::string> result(std::move(directories));
@@ -35,6 +35,6 @@ std::vector<std::string> getFilesAndDirectories(const std::string& directoryPath
     return result;
 }
 
-std::string getCurrentWorkingDirectory() {
+std::string getCurrentWorkingDirectory() noexcept {
     return std::filesystem::current_path().string();
 }

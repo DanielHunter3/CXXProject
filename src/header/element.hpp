@@ -5,6 +5,8 @@
 #include <array>
 #include <map>
 
+#include "resulthandler.hpp" // new
+
 namespace filemaneger {}
 
 namespace filemaneger::element {
@@ -39,7 +41,7 @@ namespace filemaneger::file {
     void writeFile(const std::string& filename, 
                     const std::string& string, 
                     std::ios_base::openmode mode  = std::ios::out);
-    std::string readFile(const std::string& filename);
+    Result<std::string> readFile(const std::string& filename) noexcept;
 }
 
 namespace filemaneger::directory {

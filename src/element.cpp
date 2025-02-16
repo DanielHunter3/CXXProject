@@ -14,8 +14,6 @@
 #endif
 
 #include "header/details.hpp"
-#include "header/customexception.hpp"
-#include "resulthandler.hpp" // new
 
 #include "header/element.hpp"
 
@@ -88,13 +86,13 @@ namespace filemaneger::element {
 
     void remove(const std::string& name) {
         if (!fs::remove(name)) {
-            throw ElementDeleteException("Error of delete element");
+            throw std::runtime_error("Error of delete element");
         }
     }
 
     void create(const std::string& name) {
         if (fs::exists(name)) {
-            throw ElementCreateException(("File or directory already exists: " + name).c_str());
+            throw std::runtime_error(("File or directory already exists: " + name).c_str());
         }
         if (in(name, '.')) { filemaneger::file::createFile(name); }
         else { filemaneger::directory::createDirectory(name); }
@@ -105,17 +103,17 @@ namespace filemaneger::file {
 
     void deleteFile(const std::string& path) {
         if (!fs::remove(path)) {
-            throw ElementDeleteException(("Error deleting file: " + path).c_str());
+            throw std::runtime_error(("Error deleting file: " + path).c_str());
         }
     }
 
     void createFile(const std::string& path) {
         if (fs::exists(path)) {
-            throw ElementCreateException(("File have already created: " + path).c_str());
+            throw std::runtime_error(("File have already created: " + path).c_str());
         }
         auto file = std::make_unique<std::ofstream>(path);
         if (!file->is_open()) {
-            throw ElementCreateException(("Error opening file: " + path).c_str());
+            throw std::runtime_error(("Error opening file: " + path).c_str());
         }
         file->close();
     }
@@ -126,17 +124,18 @@ namespace filemaneger::file {
     {
         std::ofstream file(filename, mode);
         if (!file.is_open()) {
-            throw FileWriteException(("Error opening file: " + filename).c_str());
+            throw std::runtime_error(("Error opening file: " + filename).c_str());
         }
         file << string;
         file.close();
     }
 
-    std::string readFile(const std::string& filename) {
+    Result<std::string> readFile(const std::string& filename) noexcept {
         std::ifstream file(filename);
         std::string result, line;
         if (!file.is_open()) {
-            throw FileReadException(("Error opening file: " + filename).c_str());
+            //throw FileReadException(("Error opening file: " + filename).c_str());
+            return ResultError {FileReadError, "Error opening file: " + filename};
         }
         while (std::getline(file, line)) {
             result += line + "\n";
@@ -157,19 +156,19 @@ namespace filemaneger::directory {
         #endif
 
         if (result == -1) {
-            throw ElementCreateException(("Could not create directory: " + dirname).c_str());
+            throw std::runtime_error(("Could not create directory: " + dirname).c_str());
         }
     }
 
     void changeDirectory(const std::string& dirname) {
         if (chdir(dirname.c_str()) == -1) {
-            throw ChangeDirectoryException(("Could not change directory to: " + dirname).c_str());
+            throw std::runtime_error(("Could not change directory to: " + dirname).c_str());
         }
     }
 
     void deleteDirectory(const std::string& dirname) {
         if (rmdir(dirname.c_str()) == -1) {
-            throw ElementDeleteException(("Could not delete directory: " + dirname).c_str());
+            throw std::runtime_error(("Could not delete directory: " + dirname).c_str());
         }
     }
 }
